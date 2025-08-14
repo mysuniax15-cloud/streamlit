@@ -206,7 +206,10 @@ def card(title, icon_key=None):
 
 
 # ==== 0. 문항-카테고리 매핑 읽기 =================================
-QUEST_DF   = pd.read_csv("객관식 문항 분류 35문항 (7개 카테고리).csv", encoding="utf-8-sig")
+BASE_DIR = os.path.dirname(__file__)
+file_path = os.path.join(BASE_DIR, "객관식 문항 분류 35문항 (7개 카테고리).csv")
+
+QUEST_DF = pd.read_csv(file_path, encoding="utf-8-sig")
 CAT2ITEMS  = {cat: QUEST_DF[cat].dropna().tolist() for cat in QUEST_DF.columns}
 ITEM2CAT   = {item: cat for cat, items in CAT2ITEMS.items() for item in items}
 
@@ -3954,5 +3957,6 @@ else:
 
 # 실행 안내
 # streamlit run ax4_final.py
+
 
 

@@ -26,22 +26,16 @@ import textwrap
 import base64
 import unicodedata
 import matplotlib
-matplotlib.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
+matplotlib.rcParams['axes.unicode_minus'] = False
 from matplotlib.ticker import MaxNLocator
 from matplotlib.patches import Wedge
 
-
-
-
-
-
-
-# --- [IMPORTS 끝난 직후에] 폰트 통합 설정 ---
+# --- 폰트 통합 설정 ---
 BASE_DIR = os.path.dirname(__file__)
 font_path_regular = os.path.join(BASE_DIR, "NotoSansKR-Regular.ttf")
 font_path_bold    = os.path.join(BASE_DIR, "NotoSansKR-Bold.ttf")
 
-# (옵션) 없으면 내려받기
+# (옵션) 없으면 다운로드
 url_regular = "https://github.com/google/fonts/raw/main/ofl/notosanskr/NotoSansKR-Regular.ttf"
 url_bold    = "https://github.com/google/fonts/raw/main/ofl/notosanskr/NotoSansKR-Bold.ttf"
 def download_font(url, save_path):
@@ -52,76 +46,10 @@ download_font(url_regular, font_path_regular)
 download_font(url_bold,    font_path_bold)
 
 # ReportLab 등록
-pdfmetrics.registerFont(TTFont("KOR_FONT",       font_path_regular))
-pdfmetrics.registerFont(TTFont("KOR_FONT_BOLD",  font_path_bold))
+pdfmetrics.registerFont(TTFont("KOR_FONT", font_path_regular))
+pdfmetrics.registerFont(TTFont("KOR_FONT_BOLD", font_path_bold))
 
-# Matplotlib도 같은 폰트를 쓰게 설정
-from matplotlib import font_manager, rcParams
-font_manager.fontManager.addfont(font_path_regular)
-font_manager.fontManager.addfont(font_path_bold)
-rcParams["font.family"] = "Noto Sans KR"
-rcParams["axes.unicode_minus"] = False
-
-
-
-import streamlit as st
-import pandas as pd
-from openai import OpenAI
-import pdfplumber
-import urllib.request
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfbase.pdfmetrics import stringWidth
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib.utils import ImageReader
-from io import BytesIO
-from matplotlib.ticker import MaxNLocator, MultipleLocator
-from matplotlib.patches import Wedge
-from reportlab.lib.colors import HexColor
-from zipfile import ZipFile
-from matplotlib import colors as mcolors
-import time, random
-from openai import RateLimitError
-import os
-import hashlib
-import matplotlib.pyplot as plt
-import numpy as np
-import re
-import textwrap
-import base64
-import unicodedata
-import matplotlib
-matplotlib.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
-from matplotlib.ticker import MaxNLocator
-from matplotlib.patches import Wedge
-
-
-
-
-
-
-
-# --- [IMPORTS 끝난 직후에] 폰트 통합 설정 ---
-BASE_DIR = os.path.dirname(__file__)
-font_path_regular = os.path.join(BASE_DIR, "NotoSansKR-Regular.ttf")
-font_path_bold    = os.path.join(BASE_DIR, "NotoSansKR-Bold.ttf")
-
-# (옵션) 없으면 내려받기
-url_regular = "https://github.com/google/fonts/raw/main/ofl/notosanskr/NotoSansKR-Regular.ttf"
-url_bold    = "https://github.com/google/fonts/raw/main/ofl/notosanskr/NotoSansKR-Bold.ttf"
-def download_font(url, save_path):
-    if not os.path.exists(save_path):
-        urllib.request.urlretrieve(url, save_path)
-
-download_font(url_regular, font_path_regular)
-download_font(url_bold,    font_path_bold)
-
-# ReportLab 등록
-pdfmetrics.registerFont(TTFont("KOR_FONT",       font_path_regular))
-pdfmetrics.registerFont(TTFont("KOR_FONT_BOLD",  font_path_bold))
-
-# Matplotlib도 같은 폰트를 쓰게 설정
+# Matplotlib 폰트 설정
 from matplotlib import font_manager, rcParams
 font_manager.fontManager.addfont(font_path_regular)
 font_manager.fontManager.addfont(font_path_bold)
@@ -131,8 +59,20 @@ rcParams["axes.unicode_minus"] = False
 
 
 
-
-
+def read_excel_safe(file_or_path):
+    """
+    openpyxl이 없으면 친절한 에러로 안내하고,
+    있으면 engine='openpyxl'로 확실히 읽습니다.
+    """
+    try:
+        import openpyxl  # 의존성 확인
+        return pd.read_excel(file_or_path, engine="openpyxl")
+    except ImportError:
+        st.error(
+            "엑셀(.xlsx)을 읽으려면 openpyxl이 필요합니다. "
+            "requirements.txt에 `openpyxl>=3.1.0`을 추가 후 다시 실행하거나, CSV로 업로드하세요."
+        )
+        st.stop()
 
 
 # ====== Streamlit UI & CSS ======
@@ -7919,6 +7859,7 @@ else:
 
 # 실행 안내
 # streamlit run ax4_final.py
+
 
 
 

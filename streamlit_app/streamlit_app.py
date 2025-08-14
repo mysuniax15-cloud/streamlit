@@ -26,7 +26,6 @@ import textwrap
 import base64
 import unicodedata
 import matplotlib
-matplotlib.rcParams['font.family'] = 'Malgun Gothic'
 matplotlib.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
 from matplotlib.ticker import MaxNLocator
 from matplotlib.patches import Wedge
@@ -37,7 +36,31 @@ from matplotlib.patches import Wedge
 
 
 
+# --- [IMPORTS 끝난 직후에] 폰트 통합 설정 ---
+BASE_DIR = os.path.dirname(__file__)
+font_path_regular = os.path.join(BASE_DIR, "NotoSansKR-Regular.ttf")
+font_path_bold    = os.path.join(BASE_DIR, "NotoSansKR-Bold.ttf")
 
+# (옵션) 없으면 내려받기
+url_regular = "https://github.com/google/fonts/raw/main/ofl/notosanskr/NotoSansKR-Regular.ttf"
+url_bold    = "https://github.com/google/fonts/raw/main/ofl/notosanskr/NotoSansKR-Bold.ttf"
+def download_font(url, save_path):
+    if not os.path.exists(save_path):
+        urllib.request.urlretrieve(url, save_path)
+
+download_font(url_regular, font_path_regular)
+download_font(url_bold,    font_path_bold)
+
+# ReportLab 등록
+pdfmetrics.registerFont(TTFont("KOR_FONT",       font_path_regular))
+pdfmetrics.registerFont(TTFont("KOR_FONT_BOLD",  font_path_bold))
+
+# Matplotlib도 같은 폰트를 쓰게 설정
+from matplotlib import font_manager, rcParams
+font_manager.fontManager.addfont(font_path_regular)
+font_manager.fontManager.addfont(font_path_bold)
+rcParams["font.family"] = "Noto Sans KR"
+rcParams["axes.unicode_minus"] = False
 
 
 
@@ -206,38 +229,6 @@ def card(title, icon_key=None):
 
 
 
-
-
-# ==== 0. 문항-카테고리 매핑 읽기 =================================
-
-BASE_DIR = os.path.dirname(__file__)
-font_path_regular = os.path.join(BASE_DIR, "NotoSansKR-Regular.ttf")
-font_path_bold = os.path.join(BASE_DIR, "NotoSansKR-Bold.ttf")
-
-# 구글 폰트 URL (TTF 버전)
-url_regular = "https://github.com/google/fonts/raw/main/ofl/notosanskr/NotoSansKR-Regular.ttf"
-url_bold = "https://github.com/google/fonts/raw/main/ofl/notosanskr/NotoSansKR-Bold.ttf"
-
-# 폰트 다운로드 함수
-def download_font(url, save_path):
-    print(f"Downloading font: {save_path}")
-    urllib.request.urlretrieve(url, save_path)
-
-# Regular 폰트 없으면 다운로드
-if not os.path.exists(font_path_regular):
-    download_font(url_regular, font_path_regular)
-
-# Bold 폰트 없으면 다운로드
-if not os.path.exists(font_path_bold):
-    download_font(url_bold, font_path_bold)
-
-# ReportLab에 등록
-pdfmetrics.registerFont(TTFont("KOR_FONT", font_path_regular))
-pdfmetrics.registerFont(TTFont("KOR_FONT_BOLD", font_path_bold))
-
-# ==== CSV/엑셀 등 데이터 읽기 ====
-file_path = os.path.join(BASE_DIR, "객관식 문항 분류 35문항 (7개 카테고리).csv")
-QUEST_DF = pd.read_csv(file_path, encoding="utf-8-sig")
 
 
 
@@ -2593,14 +2584,6 @@ if 'survey_df' not in st.session_state:
 
 
 
-# ====== 한글 폰트 등록 ======
-FONT_PATH = "C:/Windows/Fonts/malgun.ttf"
-if os.path.exists(FONT_PATH):
-    pdfmetrics.registerFont(TTFont("KOR_FONT", FONT_PATH))
-else:
-    raise FileNotFoundError("한글 폰트를 찾을 수 없습니다.")
-
-
 
 
 # 볼드용 폰트도 등록
@@ -3981,6 +3964,7 @@ else:
 
 # 실행 안내
 # streamlit run ax4_final.py
+
 
 
 

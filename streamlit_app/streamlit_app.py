@@ -206,13 +206,26 @@ def card(title, icon_key=None):
 
 
 # ==== 0. 문항-카테고리 매핑 읽기 =================================
-BASE_DIR = os.path.dirname(__file__)
+
+# 📌 폰트 경로 (TTF 사용)
+font_path_regular = os.path.join(BASE_DIR, "NotoSansKR-Regular.ttf")
+font_path_bold = os.path.join(BASE_DIR, "NotoSansKR-Bold.ttf")
+
+if not os.path.exists(font_path_regular) or not os.path.exists(font_path_bold):
+    raise FileNotFoundError("한글 폰트를 찾을 수 없습니다. NotoSansKR 파일을 업로드하세요.")
+
+pdfmetrics.registerFont(TTFont("KOR_FONT", font_path_regular))
+pdfmetrics.registerFont(TTFont("KOR_FONT_BOLD", font_path_bold))
+
+# 📌 CSV 경로
 file_path = os.path.join(BASE_DIR, "객관식 문항 분류 35문항 (7개 카테고리).csv")
 
-QUEST_DF = pd.read_csv(file_path, encoding="utf-8-sig")
-CAT2ITEMS  = {cat: QUEST_DF[cat].dropna().tolist() for cat in QUEST_DF.columns}
-ITEM2CAT   = {item: cat for cat, items in CAT2ITEMS.items() for item in items}
+if not os.path.exists(file_path):
+    raise FileNotFoundError(f"CSV 파일을 찾을 수 없습니다: {file_path}")
 
+QUEST_DF = pd.read_csv(file_path, encoding="utf-8-sig")
+CAT2ITEMS = {cat: QUEST_DF[cat].dropna().tolist() for cat in QUEST_DF.columns}
+ITEM2CAT = {item: cat for cat, items in CAT2ITEMS.items() for item in items}
 
 
 
@@ -3957,6 +3970,7 @@ else:
 
 # 실행 안내
 # streamlit run ax4_final.py
+
 
 
 

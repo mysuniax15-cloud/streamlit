@@ -2586,18 +2586,6 @@ if 'survey_df' not in st.session_state:
 
 
 
-# 볼드용 폰트도 등록
-BOLD_PATH = "C:/Windows/Fonts/malgunbd.ttf"
-if os.path.exists(BOLD_PATH):
-    pdfmetrics.registerFont(TTFont("KOR_FONT_BOLD", BOLD_PATH))
-else:
-    # 대체로 굴림(bold) 등 다른 볼드 폰트로 대체하셔도 됩니다
-    pdfmetrics.registerFont(TTFont("KOR_FONT_BOLD", FONT_PATH))
-
-
-
-
-
 
 
 
@@ -3964,6 +3952,7 @@ else:
 
 # 실행 안내
 # streamlit run ax4_final.py
+
 
 
 

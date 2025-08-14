@@ -30,6 +30,25 @@ matplotlib.rcParams['axes.unicode_minus'] = False
 from matplotlib.ticker import MaxNLocator
 from matplotlib.patches import Wedge
 
+
+
+def read_excel_safe(file_or_path):
+    """
+    openpyxl이 없으면 친절한 에러로 안내하고,
+    있으면 engine='openpyxl'로 확실히 읽습니다.
+    """
+    try:
+        import openpyxl  # 의존성 확인
+        return pd.read_excel(file_or_path, engine="openpyxl")
+    except ImportError:
+        st.error(
+            "엑셀(.xlsx)을 읽으려면 openpyxl이 필요합니다. "
+            "requirements.txt에 `openpyxl>=3.1.0`을 추가 후 다시 실행하거나, CSV로 업로드하세요."
+        )
+        st.stop()
+
+
+
 # --- 폰트 통합 설정 ---
 BASE_DIR = os.path.dirname(__file__)
 font_path_regular = os.path.join(BASE_DIR, "NotoSansKR-Regular.ttf")
@@ -58,21 +77,6 @@ rcParams["axes.unicode_minus"] = False
 
 
 
-
-def read_excel_safe(file_or_path):
-    """
-    openpyxl이 없으면 친절한 에러로 안내하고,
-    있으면 engine='openpyxl'로 확실히 읽습니다.
-    """
-    try:
-        import openpyxl  # 의존성 확인
-        return pd.read_excel(file_or_path, engine="openpyxl")
-    except ImportError:
-        st.error(
-            "엑셀(.xlsx)을 읽으려면 openpyxl이 필요합니다. "
-            "requirements.txt에 `openpyxl>=3.1.0`을 추가 후 다시 실행하거나, CSV로 업로드하세요."
-        )
-        st.stop()
 
 
 # ====== Streamlit UI & CSS ======
@@ -7859,6 +7863,7 @@ else:
 
 # 실행 안내
 # streamlit run ax4_final.py
+
 
 
 

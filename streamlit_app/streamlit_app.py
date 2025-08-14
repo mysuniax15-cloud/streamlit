@@ -68,12 +68,12 @@ st.set_page_config(page_title="리더십 분석기", layout="wide")
 
 
 # ====== A.X 4.0 API Key 설정 ======
-SKT_AX4_KEY = "sktax-XyeKFrq67ZjS4EpsDlrHHXV8it"
+API_KEY = st.secrets.get("SKT_AX4_KEY") or os.getenv("SKT_AX4_KEY")
 client = OpenAI(
     base_url="https://guest-api.sktax.chat/v1",
-    api_key=SKT_AX4_KEY
+    api_key=API_KEY,
+    timeout=60,
 )
-
 
 
 
@@ -3955,3 +3955,4 @@ else:
 
 # 실행 안내
 # streamlit run ax4_final.py
+
